@@ -1,0 +1,3 @@
+[apic1]
+10.95.33.231 username=admin password=Cisco321
+#10.95.33.231 username=ansible privatekey=ansible.key

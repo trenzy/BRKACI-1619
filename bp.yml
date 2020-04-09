@@ -1,0 +1,64 @@
+---
+# Demo using the ACI REST module
+- name: Configuration using aci_rest
+  hosts: apic1
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: Set COOP Policy to strict
+    aci_rest:
+        hostname: "{{ inventory_hostname }}"
+        username: ansible
+        private_key: ansible.key
+        path: /api/node/mo/uni/fabric/pol-default.json
+        method: post
+        content: |
+          {
+            "coopPol": {
+              "attributes":{
+                "type":"strict",
+                "dn":"uni/fabric/pol-default"
+                }
+              }
+           }
+        validate_certs: no
+
+  - name: Enforce Subnet Check
+    aci_rest:
+        hostname: "{{ inventory_hostname }}"
+        username: ansible
+        private_key: ansible.key
+        path: /api/node/mo/uni/infra/settings.json
+        method: post
+        content: |
+          {
+            "infraSetPol": {
+              "attributes": {
+                "enforceSubnetCheck":"true",
+                "dn":"uni/infra/settings"
+                }
+             }
+           }
+        validate_certs: no
+
+  - name: Endpoint Loop Protection
+    aci_rest:
+        hostname: "{{ inventory_hostname }}"
+        username: ansible
+        private_key: ansible.key
+        path: /api/node/mo/uni/infra/epLoopProtectP-default.json
+        method: post
+        content: |
+          {
+            "epLoopProtectP": {
+              "attributes": {
+                "action": "",
+                "adminSt": "enabled",
+                "loopDetectIntvl": "60",
+                "loopDetectMult": "4",
+                "dn":"uni/infra/epLoopProtectP-default"
+              }
+            }
+          }
+        validate_certs: no

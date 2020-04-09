@@ -1,0 +1,18 @@
+---
+# Demo ACI Playbook
+- name: Configuring Example Tenant
+  hosts: apic1
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: Create a New Tenant
+    aci_tenant:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        tenant: "CiscoLive"
+        description: "Tenant configured by Ansible"
+        validate_certs: no
+        state: present
+

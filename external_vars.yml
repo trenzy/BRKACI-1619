@@ -1,0 +1,21 @@
+---
+# The variables for the three tier playbook
+   tenant: Ansible
+   vrf: ansible-VRF
+   bd:
+     name: ansible-BD
+     ip: 10.255.255.1
+     mask: 24
+   app_profile: ansible-AP
+   http_filter: http_ans
+   http_filter_entry: http_ans_entry
+   web_to_app_contract: web_to_app
+   web_to_app_contract_subject: web_to_app_subject
+   db_filter: db_ans_entry
+   db_filter_entry: db_ans_entry
+   app_to_db_contract: app_to_db
+   app_to_db_contract_subject: app_to_db_subject
+   epg1: web
+   epg2: app
+   epg3: db
+

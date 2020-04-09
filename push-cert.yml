@@ -1,0 +1,64 @@
+# Signature-based Cert Playbook
+# Playbook creates a local user (Ansible) and associates a 
+# locally created cert with the account and also
+# uses the ACI Rest module to set the domain privileges to all
+#
+---
+# User certificate
+- name: Push x509 cert and create user Ansible for signature based authentication
+  hosts: apic1
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: Add a user
+    aci_aaa_user:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      aaa_user: ansible
+      aaa_password: C1sco-321
+      expiration: never
+      expires: no
+      email: threnzy@cisco.com
+      first_name: Thomas
+      last_name: Renzy
+      validate_certs: no
+      state: present
+  - name: Add a certificate to user ansible
+    aci_aaa_user_certificate:
+      use_proxy: no
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      aaa_user: ansible
+      certificate_name: ansible
+      certificate_data: "{{ lookup('file', 'ansible.crt') }}"
+      validate_certs: no
+      state: present
+  - name: Add admin privileges to allow Ansible user to make changes
+    aci_rest:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      validate_certs: no
+      path: /api/node/mo/uni/userext/user-ansible/userdomain-all.json
+      method: post
+      content:
+        {"aaaUserDomain":
+          {"attributes":{
+            "name":"all",
+            "rn":"userdomain-all",
+            },
+            "children":[
+              {"aaaUserRole":
+                {"attributes":{
+                  "name":"admin","privType":"writePriv",
+                  "rn":"role-admin",
+                  },
+                  "children":[]
+                }
+              }
+              ]
+          }
+        }
